@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --text-color: #2d3436;
+            --bg-color: #f5f6fa;
+            --card-color: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --highlight-color: #00cec9;
+            --error-color: #d63031;
+            --birthday-color: #fd79a8;
+        }
+
+        .dark-mode {
+            --primary-color: #a29bfe;
+            --secondary-color: #6c5ce7;
+            --text-color: #f5f6fa;
+            --bg-color: #2d3436;
+            --card-color: #3d4548;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --highlight-color: #00cec9;
+            --error-color: #ff7675;
+            --birthday-color: #e84393;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--card-color);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 30px;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            font-size: 28px;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--card-color);
+            border: 2px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: rotate(30deg);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--highlight-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            display: none;
+        }
+
+        .result h2 {
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .age-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            margin: 10px 0;
+        }
+
+        .error {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .age-details {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .age-box {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 5px;
+            min-width: 80px;
+        }
+
+        .age-box span {
+            display: block;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .age-box div {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .next-birthday {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--birthday-color);
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .birthday-today {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .age-details {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .age-box {
+                width: 100%;
+                margin: 5px 0;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">🌙</button>
+        <h1>Age Calculator</h1>
+        
+        <div class="input-group">
+            <label for="birthDate">Enter Your Birth Date</label>
+            <input type="date" id="birthDate" name="birthDate">
+            <div class="error" id="dateError">Please enter a valid date</div>
+        </div>
+        
+        <button id="calculateBtn">Calculate Age</button>
+        
+        <div class="result" id="result">
+            <h2>Your Age</h2>
+            <div class="age-display" id="ageDisplay"></div>
+            <div class="age-details">
+                <div class="age-box">
+                    <span>Years</span>
+                    <div id="years"></div>
+                </div>
+                <div class="age-box">
+                    <span>Months</span>
+                    <div id="months"></div>
+                </div>
+                <div class="age-box">
+                    <span>Days</span>
+                    <div id="days"></div>
+                </div>
+                <div class="age-box">
+                    <span>Weeks</span>
+                    <div id="weeks"></div>
+                </div>
+            </div>
+            <div class="next-birthday" id="nextBirthday"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                // Save preference to localStorage
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                localStorage.setItem('darkMode', isDarkMode);
+                themeToggle.textContent = isDarkMode ? '☀' : '🌙';
+                themeToggle.title = isDarkMode ? 'Toggle light mode' : 'Toggle dark mode';
+            });
+
+            // Check for saved theme preference
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                themeToggle.textContent = '☀';
+                themeToggle.title = 'Toggle light mode';
+            }
+// Corrected Age calculation functionality
+const calculateBtn = document.getElementById('calculateBtn');
+const birthDateInput = document.getElementById('birthDate');
+const resultDiv = document.getElementById('result');
+const ageDisplay = document.getElementById('ageDisplay');
+const yearsDisplay = document.getElementById('years');
+const monthsDisplay = document.getElementById('months');
+const daysDisplay = document.getElementById('days');
+const weeksDisplay = document.getElementById('weeks');
+const nextBirthdayDisplay = document.getElementById('nextBirthday');
+const dateError = document.getElementById('dateError');
+
+// Set max date to today
+const today = new Date();
+const maxDate = today.toISOString().split('T')[0];
+birthDateInput.setAttribute('max', maxDate);
+
+calculateBtn.addEventListener('click', function() {
+    const birthDate = new Date(birthDateInput.value);
+    
+    // Validate input
+    if (!birthDateInput.value || birthDate > today) {
+        dateError.style.display = 'block';
+        resultDiv.style.display = 'none';
+        return;
+    } else {
+        dateError.style.display = 'none';
+    }
+    
+    // Calculate age more accurately
+    let years = today.getFullYear() - birthDate.getFullYear();
+    let months = today.getMonth() - birthDate.getMonth();
+    let days = today.getDate() - birthDate.getDate();
+    
+    // Adjust for negative months
+    if (months < 0 || (months === 0 && days < 0)) {
+        years--;
+        months += 12;
+    }
+
+    // Adjust for negative days and correct months
+    if (days < 0) {
+        months--;
+        // Get the number of days in the previous month
+        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        days = prevMonth.getDate() - birthDate.getDate() + today.getDate();
+    }
+    
+    // Calculate total days and weeks
+    const timeDiff = today - birthDate;
+    const totalDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const totalWeeks = Math.floor(totalDays / 7);
+    
+    // Calculate days until next birthday
+    const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+    if (today > nextBirthday) {
+        nextBirthday.setFullYear(today.getFullYear() + 1);
+    }
+    
+    const daysUntilBirthday = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
+    
+    // Display results
+    ageDisplay.textContent = `${years} years, ${months} months, ${days} days`;
+    yearsDisplay.textContent = years;
+    monthsDisplay.textContent = months;
+    daysDisplay.textContent = days;
+    weeksDisplay.textContent = totalWeeks;
+    
+    // Display next birthday information
+    if (daysUntilBirthday === 0) {
+        nextBirthdayDisplay.textContent = "🎉 Today is your birthday! 🎉";
+        nextBirthdayDisplay.classList.add('birthday-today');
+    } else {
+        nextBirthdayDisplay.textContent = `Days until next birthday: ${daysUntilBirthday}`;
+        nextBirthdayDisplay.classList.remove('birthday-today');
+    }
+    
+    // Show result
+    resultDiv.style.display = 'block';
+    
+    // Smooth scroll to result
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+});
+
+// Calculate age if date is already filled (on page refresh)
+if (birthDateInput.value) {
+    calculateBtn.click();
+}
+        });
+    </script>
+</body>
+</html>
